@@ -1,5 +1,12 @@
-import { Body, Controller, HttpCode, Post, UsePipes } from '@nestjs/common'
-import { hash } from 'bcryptjs'
+import {
+  Body,
+  Controller,
+  HttpCode,
+  Post,
+  UnauthorizedException,
+  UsePipes,
+} from '@nestjs/common'
+import { compare } from 'bcryptjs'
 import { z } from 'zod'
 import { ZodValidationPipe } from 'src/pipes/zod-validation-pipes'
 import { PrismaService } from 'src/prisma/prisma.service'
@@ -20,22 +27,28 @@ export class AuthenticateController {
 
   @Post()
   @HttpCode(201)
-  // @UsePipes(new ZodValidationPipe(authenticateBodySchema))
-  async handle(@Body() { email }: AuthenticateBodySchema) {
+  @UsePipes(new ZodValidationPipe(authenticateBodySchema))
+  async handle(@Body() body: AuthenticateBodySchema) {
+    const { email, password } = body
+
     const userByEmail = await this.prisma.user.findUnique({
       where: {
         email,
       },
     })
     if (!userByEmail) {
-      throw new Error('Não encontrado')
+      throw new UnauthorizedException('User credentals do not match')
+    }
+    const isPasswordValid = await compare(password, userByEmail.password)
+
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('User credentals do not match')
     }
 
-    try {
-      const token = this.jwt.sign({ sub: 'user-id' })
-      return token
-    } catch (error) {
-      console.log(error)
+    const accessToken = this.jwt.sign({ sub: userByEmail.id })
+
+    return {
+      access_token: accessToken,
     }
   }
 }
