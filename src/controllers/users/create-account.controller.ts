@@ -23,6 +23,9 @@ export class CreateAccountController {
   constructor(private prisma: PrismaService) {}
   @Post()
   @HttpCode(201)
+  // Validação do body que é enviado, o UsePipes vai fazer essa validação, usa-se uma classe, passando o schema como parâmetro.
+  // Essa classe implementado PipeTransform e possui uma função que irá transformar essa informação, se a informação estiver errada,
+  // é enviado um erro
   @UsePipes(new ZodValidationPipe(createAccountBodySchema))
   async handle(@Body() { name, email, password }: CreateAccountBodySchema) {
     const emailAlreadyExists = await this.prisma.user.findUnique({
