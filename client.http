@@ -28,9 +28,3 @@ Content-Type: application/json
 POST {{baseUrl}}/questions
 Authorization: Bearer {{accessToken}}
 Content-Type: application/json
-
-{
-  "title": "O que é Node.js",
-  "content": "Node.Js é um ambiente",
-  "slug": "osdopskadkaspdkakdoapksdo",
-}
