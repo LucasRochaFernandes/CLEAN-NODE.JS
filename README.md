@@ -1,10 +1,11 @@
 # Nest.Js Full Api Project
 
-Full api with Nest.Js
+Full api with Nest.Js, using clean architecture and DDD practices
 
 ### Using tools like
   - Nest.Js
   - Prisma
+  - Zod
   
 ### To run this project
 
