@@ -23,7 +23,6 @@ beforeAll(async () => {
 })
 
 afterAll(async () => {
-  console.log(process.env.DATABASE_URL)
   await prisma.$executeRawUnsafe(`DROP SCHEMA IF EXISTS "${schemaId}" CASCADE`)
   await prisma.$disconnect()
 })
