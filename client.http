@@ -30,6 +30,12 @@ Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
 {
-  "title": "O que é Node",
-  "content": "Um estilo de vida"
+  "title": "O que é React",
+  "content": "Um estilo de vida 2"
 }
+
+###
+
+# @name create_question
+GET {{baseUrl}}/questions?page=2
+Authorization: Bearer {{accessToken}}
