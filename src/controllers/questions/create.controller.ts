@@ -1,14 +1,15 @@
-import { Controller, Post, UseGuards, Req } from '@nestjs/common'
+import { Controller, Post, UseGuards, Body } from '@nestjs/common'
 
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { z } from 'zod'
 import { CurrentUser } from 'src/auth/current-user-decorator'
 import { TokenSchema } from 'src/auth/jwt.strategy'
+import { ZodValidationPipe } from 'src/pipes/zod-validation-pipes'
+import { createSlug } from 'src/utils/slug'
 
 const createQuestionBodySchema = z.object({
   title: z.string(),
-  slug: z.string(),
   content: z.string(),
 })
 
@@ -22,8 +23,25 @@ export class CreateQuestionController {
 
   @Post()
   // decorator customizado para receber o payload do token
-  async handle(@CurrentUser() user: TokenSchema) {
+  async handle(
+    @CurrentUser() user: TokenSchema,
+    @Body(new ZodValidationPipe(createQuestionBodySchema))
+    body: CreateQuestionBodySchema,
+  ) {
+    const { content, title } = body
     const { sub: userId } = user
-    console.log(userId)
+    const slug = createSlug(title)
+
+    const question = await this.prisma.question.create({
+      data: {
+        content,
+        title,
+        slug,
+        authorId: userId,
+      },
+    })
+    return {
+      question,
+    }
   }
 }

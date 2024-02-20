@@ -28,3 +28,8 @@ Content-Type: application/json
 POST {{baseUrl}}/questions
 Authorization: Bearer {{accessToken}}
 Content-Type: application/json
+
+{
+  "title": "O que é Node",
+  "content": "Um estilo de vida"
+}
